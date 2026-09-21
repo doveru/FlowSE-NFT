@@ -1,0 +1,46 @@
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Packaging / build artifacts
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# macOS
+.DS_Store
+__MACOSX/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files / logs
+tmp/
+*.tmp
+*.log
+
+# Experiment tracking and outputs
+wandb/
+logs/
+outputs/
+runs/
+
+# Model checkpoints / large training artifacts
+checkpoints/
+*.ckpt
+*.pt
+*.pth
+
+# Local environment / secrets
+.env
+.env.*
+.venv/
+venv/
