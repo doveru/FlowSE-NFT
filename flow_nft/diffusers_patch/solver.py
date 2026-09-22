@@ -101,7 +101,7 @@ def run_sampling(
 
         pred = v_pred_fn(z.to(dtype), sigma)
         if solver == "flow":
-            z, pred_original, log_prob = flow_grpo_step(
+            z, pred_original, log_prob = flow_nft_step(
                 model_output=pred.float(),
                 latents=z.float(),
                 eta=eta,
@@ -154,7 +154,7 @@ def run_sampling(
     return latents, all_latents, all_log_probs
 
 
-def flow_grpo_step(
+def flow_nft_step(
     model_output: torch.Tensor,
     latents: torch.Tensor,
     eta: float,

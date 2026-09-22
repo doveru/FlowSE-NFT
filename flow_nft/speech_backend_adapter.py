@@ -10,14 +10,14 @@ import numpy as np
 import torch
 import torch.distributed as dist
 
-from flow_grpo.speech_paths import PROJECT_ROOT, resolve_project_path
+from flow_nft.speech_paths import PROJECT_ROOT, resolve_project_path
 
-from flow_grpo.speech_flowse import policy_snapshot as flowse_policy_snapshot
-from flow_grpo.speech_flowse import rewards as flowse_rewards
-from flow_grpo.speech_flowse import rl_dataset as flowse_dataset
-from flow_grpo.speech_flowse import rollout as flowse_rollout
-from flow_grpo.speech_flowse import runtime as flowse_runtime
-from flow_grpo.speech_nft_core import (
+from flow_nft.speech_flowse import policy_snapshot as flowse_policy_snapshot
+from flow_nft.speech_flowse import rewards as flowse_rewards
+from flow_nft.speech_flowse import rl_dataset as flowse_dataset
+from flow_nft.speech_flowse import rollout as flowse_rollout
+from flow_nft.speech_flowse import runtime as flowse_runtime
+from flow_nft.speech_nft_core import (
     PerConditionStatTracker,
     RolloutBatch,
     SpeechMixedSamplingState,
@@ -167,7 +167,7 @@ class SpeechBackendAdapter:
         except ImportError as exc:
             raise ImportError(
                 "LoRA is enabled but `peft` is not installed. "
-                "Install project dependencies (peft==0.10.0)."
+                "Install project dependencies with `pip install -r requirements.txt` (peft==0.19.1)."
             ) from exc
 
         strategy = str(getattr(lora_conf, "strategy", "multi_model")).strip().lower()

@@ -14,7 +14,7 @@ export VOICE_EVALUATION_ROOT="${VOICE_EVALUATION_ROOT:-$(dirname "$PWD")/voice_e
 export SPEECH_DATA_ROOT="${SPEECH_DATA_ROOT:-$(dirname "$PWD")/DNS_noreverb}"
 export TRAIN_MANIFEST="${TRAIN_MANIFEST:-$PWD/dataset/speech/train_manifest.jsonl}"
 export VAL_MANIFEST="${VAL_MANIFEST:-$PWD/dataset/speech/val_manifest.jsonl}"
-export INIT_CHECKPOINT="${INIT_CHECKPOINT:-$PWD/flow_grpo/speech_flowse/ckpts/best.pt.tar}"
+export INIT_CHECKPOINT="${INIT_CHECKPOINT:-$PWD/flow_nft/speech_flowse/ckpts/best.pt.tar}"
 export SPEECHBERT_MODEL_PATH="${SPEECHBERT_MODEL_PATH:-$VOICE_EVALUATION_ROOT/hubert-base-ls960}"
 export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
 

@@ -33,11 +33,18 @@ logs/
 outputs/
 runs/
 
+# Generated speech data manifests (keep the illustrative example)
+/dataset/speech/*_manifest.jsonl
+!/dataset/speech/example_manifest.jsonl
+/dataset/speech/*.stats.json
+
 # Model checkpoints / large training artifacts
 checkpoints/
 *.ckpt
 *.pt
 *.pth
+/flow_nft/speech_flowse/vocos-mel-24khz/pytorch_model.bin
+/flow_nft/speech_flowse/vocos-mel-24khz/.cache/
 
 # Local environment / secrets
 .env

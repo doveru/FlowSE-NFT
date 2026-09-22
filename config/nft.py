@@ -4,7 +4,7 @@ from pathlib import Path
 
 import ml_collections
 
-from flow_grpo.speech_paths import resolve_project_path
+from flow_nft.speech_paths import resolve_project_path
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 _base_spec = importlib.util.spec_from_file_location("speech_nft_base", Path(__file__).with_name("base.py"))
@@ -90,7 +90,7 @@ def speech_wotext_pure_nft():
     config.speech = speech = ml_collections.ConfigDict()
 
     speech.model = model = ml_collections.ConfigDict()
-    model.init_checkpoint = _asset_path("INIT_CHECKPOINT", "flow_grpo/speech_flowse/ckpts/best.pt.tar")
+    model.init_checkpoint = _asset_path("INIT_CHECKPOINT", "flow_nft/speech_flowse/ckpts/best.pt.tar")
     model.lora = lora = ml_collections.ConfigDict()
     lora.enabled = True
     lora.strategy = "multi_model"
@@ -104,7 +104,7 @@ def speech_wotext_pure_nft():
     lora.save_adapter_only = True
     model.nnet_conf = nnet_conf = ml_collections.ConfigDict()
     nnet_conf.tokenizer = "pinyin"
-    nnet_conf.tokenizer_path = _asset_path("TOKENIZER_PATH", "flow_grpo/speech_flowse/Emilia_ZH_EN_pinyin/vocab.txt")
+    nnet_conf.tokenizer_path = _asset_path("TOKENIZER_PATH", "flow_nft/speech_flowse/Emilia_ZH_EN_pinyin/vocab.txt")
     nnet_conf.audio_drop_prob = 0.0
     nnet_conf.cond_drop_prob = 0.0
 
@@ -128,7 +128,7 @@ def speech_wotext_pure_nft():
 
     nnet_conf.vocoder = vocoder = ml_collections.ConfigDict()
     vocoder.is_local = True
-    vocoder.local_path = _asset_path("VOCODER_PATH", "flow_grpo/speech_flowse/vocos-mel-24khz")
+    vocoder.local_path = _asset_path("VOCODER_PATH", "flow_nft/speech_flowse/vocos-mel-24khz")
 
     speech.data = data = ml_collections.ConfigDict()
     data.data_root = _asset_path("SPEECH_DATA_ROOT", "../DNS_noreverb")

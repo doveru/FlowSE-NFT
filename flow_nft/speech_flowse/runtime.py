@@ -7,7 +7,7 @@ import torch
 import torchaudio.functional as F_audio
 from vocos import Vocos
 
-from flow_grpo.speech_paths import resolve_project_path
+from flow_nft.speech_paths import resolve_project_path
 
 from .model import CFM, DiT
 from .model.model_utils import get_tokenizer

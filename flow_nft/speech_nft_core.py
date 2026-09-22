@@ -1278,7 +1278,7 @@ def compute_pure_nft_terms(
     batch_size = x_t.shape[0]
     text_batch = [" "] * batch_size
 
-    from flow_grpo.speech_diagnostics import diagnostic_stage
+    from flow_nft.speech_diagnostics import diagnostic_stage
     diagnostic_stage("forward.current.begin")
     flow_cur = current.predict_flow(
         x=x_t,

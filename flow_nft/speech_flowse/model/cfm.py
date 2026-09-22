@@ -300,10 +300,10 @@ class CFM(nn.Module):
             raise ValueError(f"Unsupported solver: {solver!r}")
 
         try:
-            from flow_grpo.diffusers_patch.solver import run_sampling
+            from flow_nft.diffusers_patch.solver import run_sampling
         except Exception as exc:
             raise ImportError(
-                "Speech discrete sampling requires `flow_grpo.diffusers_patch.solver` "
+                "Speech discrete sampling requires `flow_nft.diffusers_patch.solver` "
                 "and its dependencies."
             ) from exc
 

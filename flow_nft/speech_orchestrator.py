@@ -17,13 +17,13 @@ from torch.nn.utils import clip_grad_norm_
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import LambdaLR
 
-from flow_grpo.speech_backend_adapter import SpeechBackendAdapter, set_seed
-from flow_grpo.speech_resume import select_training_state, restore_training_state
-from flow_grpo.speech_training_metrics import accumulate_loss_metrics_, reduce_training_metrics
-from flow_grpo.speech_diagnostics import diagnostic_stage
-from flow_grpo.speech_distributed import broadcast_save_decision, epoch_barrier
-from flow_grpo.ema import EMAModuleWrapper
-from flow_grpo.speech_nft_core import (
+from flow_nft.speech_backend_adapter import SpeechBackendAdapter, set_seed
+from flow_nft.speech_resume import select_training_state, restore_training_state
+from flow_nft.speech_training_metrics import accumulate_loss_metrics_, reduce_training_metrics
+from flow_nft.speech_diagnostics import diagnostic_stage
+from flow_nft.speech_distributed import broadcast_save_decision, epoch_barrier
+from flow_nft.ema import EMAModuleWrapper
+from flow_nft.speech_nft_core import (
     build_training_timestep_grid,
     select_timestep_indices,
 )

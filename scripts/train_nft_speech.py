@@ -7,8 +7,8 @@ from ml_collections import config_flags
 import warnings
 warnings.filterwarnings("ignore")
 
-from flow_grpo.speech_orchestrator import SpeechNFTOrchestrator
-from flow_grpo.speech_diagnostics import diagnostic_session
+from flow_nft.speech_orchestrator import SpeechNFTOrchestrator
+from flow_nft.speech_diagnostics import diagnostic_session
 
 
 _CONFIG = config_flags.DEFINE_config_file(

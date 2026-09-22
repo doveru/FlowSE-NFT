@@ -1,0 +1,2 @@
+{"utt_id": "example_train_000000000_000010000", "source_utt_id": "example_train", "noisy_path": "train/noisy/example_train.wav", "clean_path": "train/clean/example_train.wav", "text": "", "split": "train", "chunk_index": 0, "chunk_start_sec": 0.0, "chunk_end_sec": 10.0, "duration_sec": 10.0}
+{"utt_id": "example_val_000000000_000010000", "source_utt_id": "example_val", "noisy_path": "val/noisy/example_val.wav", "clean_path": "val/clean/example_val.wav", "text": "", "split": "val", "chunk_index": 0, "chunk_start_sec": 0.0, "chunk_end_sec": 10.0, "duration_sec": 10.0}

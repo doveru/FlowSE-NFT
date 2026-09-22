@@ -8,8 +8,8 @@ from typing import Any
 
 import torch
 
-from flow_grpo.speech_backend_adapter import SpeechBackendAdapter, set_seed
-from flow_grpo.speech_orchestrator import cleanup_distributed, is_main_process, setup_distributed
+from flow_nft.speech_backend_adapter import SpeechBackendAdapter, set_seed
+from flow_nft.speech_orchestrator import cleanup_distributed, is_main_process, setup_distributed
 
 
 def parse_args() -> argparse.Namespace:

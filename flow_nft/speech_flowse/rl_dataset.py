@@ -10,7 +10,7 @@ import torchaudio.functional as F_audio
 from torch.utils.data import DataLoader, Dataset, RandomSampler, SequentialSampler
 from torch.utils.data.distributed import DistributedSampler
 
-from flow_grpo.speech_paths import resolve_project_path, resolve_audio_path
+from flow_nft.speech_paths import resolve_project_path, resolve_audio_path
 
 try:
     from .model.modules import MelSpec

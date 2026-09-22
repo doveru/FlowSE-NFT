@@ -9,8 +9,8 @@ import torch.nn.functional as F
 import torchaudio.functional as F_audio
 from tqdm import tqdm
 
-from flow_grpo.speech_nft_core import select_nft_target_sample
-from flow_grpo.speech_diagnostics import diagnostic_stage
+from flow_nft.speech_nft_core import select_nft_target_sample
+from flow_nft.speech_diagnostics import diagnostic_stage
 
 from .runtime import decode_mel_to_wav, sample_enhance
 

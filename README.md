@@ -12,20 +12,21 @@ The default training entry point reproduces the paper configuration with 24 roll
 
 ## Installation
 
-Python 3.10 is recommended.
+Python 3.10 is recommended for the Linux GPU training environment. [`requirements.txt`](requirements.txt) and `setup.py` pin project dependencies to the author-provided training server export, including PyTorch/torchaudio 2.2.0, Transformers 4.44.1, Accelerate 1.2.1, and PEFT 0.19.1.
 
 ```bash
 conda create -n flowse-nft python=3.10 -y
 conda activate flowse-nft
 
-# Install PyTorch for your CUDA version. The paper code was validated with PyTorch 2.6.0.
-pip install torch==2.6.0 torchaudio==2.6.0 torchvision==0.21.0 \
-  --index-url https://download.pytorch.org/whl/cu126
-
+pip install -r requirements.txt
 pip install -e .
 ```
 
-For development/tests:
+The dependency list is curated from the working server environment, not a complete transitive lock file. Conda/Jupyter tooling, local build paths, and unrelated packages are excluded. Torchvision is not required by this speech pipeline. Diffusers is optional because the sampling solver includes a local fallback. ONNX Runtime uses the server's `onnxruntime-gpu==1.12.0` distribution; do not install the CPU `onnxruntime` distribution alongside it.
+
+These versions record the author's existing environment; installation and training in a fresh environment have not yet been verified. The export alone does not fully specify the NVIDIA driver or CUDA setup. Preserve the working server environment, and check dependency consistency in a separate environment with `python -m pip check` after installation.
+
+For development:
 
 ```bash
 pip install -e '.[dev]'
@@ -33,14 +34,14 @@ pip install -e '.[dev]'
 
 ## Pretrained Models & Reward Models
 
-The code uses four external model/resource groups: the pretrained **FlowSE** backbone, **DNSMOS P.835**, **HuBERT** features for SpeechBERTScore, and **ERes2Net** for speaker similarity.
+The code uses five external model/resource groups: the pretrained **FlowSE** backbone, **DNSMOS P.835**, **HuBERT** features for SpeechBERTScore, **ERes2Net** for speaker similarity, and the **Vocos** vocoder.
 
 By default, the repository expects the following layout. `voice_evaluation` is a sibling directory of this repository because `VOICE_EVALUATION_ROOT` defaults to `../voice_evaluation`.
 
 ```text
 <workspace>/
 ├── FlowSE-NFT/
-│   ├── flow_grpo/
+│   ├── flow_nft/
 │   │   └── speech_flowse/
 │   │       └── ckpts/
 │   │           └── best.pt.tar
@@ -72,14 +73,14 @@ FlowSE-NFT starts from the pretrained **FlowSE: Efficient and High-Quality Speec
 Download the pretrained **w/o-text FlowSE checkpoint** provided by the FlowSE authors and place/copy it at:
 
 ```text
-flow_grpo/speech_flowse/ckpts/best.pt.tar
+flow_nft/speech_flowse/ckpts/best.pt.tar
 ```
 
 For example, after downloading the checkpoint:
 
 ```bash
-mkdir -p flow_grpo/speech_flowse/ckpts
-cp /path/to/downloaded/best.pt.tar flow_grpo/speech_flowse/ckpts/best.pt.tar
+mkdir -p flow_nft/speech_flowse/ckpts
+cp /path/to/downloaded/best.pt.tar flow_nft/speech_flowse/ckpts/best.pt.tar
 ```
 
 Alternatively:
@@ -138,7 +139,7 @@ Official model: https://huggingface.co/facebook/hubert-base-ls960
 The model can be downloaded directly into the path expected by the default configuration:
 
 ```bash
-pip install -U huggingface_hub
+pip install huggingface-hub==0.32.0
 
 huggingface-cli download facebook/hubert-base-ls960 \
   --local-dir "$VOICE_EVALUATION_ROOT/hubert-base-ls960"
@@ -149,6 +150,16 @@ Then the default path is:
 ```bash
 export SPEECHBERT_MODEL_PATH="$VOICE_EVALUATION_ROOT/hubert-base-ls960"
 ```
+
+If you already downloaded HuBERT in the Hugging Face cache layout, set `SPEECHBERT_MODEL_PATH` to the specific snapshot directory containing `config.json` and the model weights, rather than the parent `models--facebook--hubert-base-ls960` directory:
+
+```bash
+# Replace /path/to/hf-cache and <snapshot-id> with your actual cache location and snapshot ID.
+export SPEECHBERT_MODEL_PATH="/path/to/hf-cache/models--facebook--hubert-base-ls960/snapshots/<snapshot-id>"
+ls -lah "$SPEECHBERT_MODEL_PATH"
+```
+
+Set this variable in the same shell before launching training or evaluation. The training launcher preserves this explicit path; no code changes or duplicate download are needed if the snapshot is complete. If the snapshot files are symbolic links, their targets must also exist. A `Model path not found` error pointing to the default `hubert-base-ls960` directory means you should check this setting against your actual model location.
 
 If no explicit local path is supplied and remote loading is enabled, the implementation can also resolve `facebook/hubert-base-ls960` through Transformers/Hugging Face.
 
@@ -180,7 +191,7 @@ git clone https://github.com/modelscope/3D-Speaker.git \
 Download the matching ModelScope snapshot:
 
 ```bash
-pip install -U modelscope
+pip install modelscope==1.21.0
 
 python - <<'PY'
 import os
@@ -209,22 +220,50 @@ export SPEAKER_MODEL_PATH="$VOICE_EVALUATION_ROOT/eres2net"
 export SPEAKER_CODE_PATH="$VOICE_EVALUATION_ROOT/3D-Speaker"
 ```
 
+### 5. Vocos vocoder
+
+The default configuration loads **charactr/vocos-mel-24khz** from a local directory to convert generated mel spectrograms into audio. The repository includes `config.yaml`, but does not include `pytorch_model.bin`. Download the weights before training or evaluation; the default local-loading configuration does not automatically download missing weights.
+
+Run the following from the repository root using the installed project environment:
+
+```bash
+export VOCODER_PATH="$PWD/flow_nft/speech_flowse/vocos-mel-24khz"
+
+python - <<'PY'
+import os
+from huggingface_hub import hf_hub_download
+
+for filename in ("config.yaml", "pytorch_model.bin"):
+    hf_hub_download(
+        repo_id="charactr/vocos-mel-24khz",
+        filename=filename,
+        local_dir=os.environ["VOCODER_PATH"],
+    )
+PY
+```
+
+If you already have both files in another directory, set `VOCODER_PATH` to that directory in the same shell before launching training or evaluation. It must point to the directory containing the files, not to the weight file itself.
+
 ### Resource check
 
 Before training, the important paths should resolve as follows:
 
 ```bash
-ls flow_grpo/speech_flowse/ckpts/best.pt.tar
+ls flow_nft/speech_flowse/ckpts/best.pt.tar
 ls "$VOICE_EVALUATION_ROOT/evaluation/DNSMOS/sig_bak_ovr.onnx"
 ls "$VOICE_EVALUATION_ROOT/evaluation/DNSMOS/model_v8.onnx"
-ls "$VOICE_EVALUATION_ROOT/hubert-base-ls960"
+ls "${SPEECHBERT_MODEL_PATH:-$VOICE_EVALUATION_ROOT/hubert-base-ls960}"
 ls "$VOICE_EVALUATION_ROOT/eres2net/pretrained_eres2net_aug.ckpt"
 ls "$VOICE_EVALUATION_ROOT/3D-Speaker/speakerlab"
+ls "${VOCODER_PATH:-$PWD/flow_nft/speech_flowse/vocos-mel-24khz}/config.yaml"
+ls "${VOCODER_PATH:-$PWD/flow_nft/speech_flowse/vocos-mel-24khz}/pytorch_model.bin"
 ```
 
 ## Data Preparation
 
 The paper uses DNS2020 noisy-clean pairs. This repository consumes JSONL manifests containing paired noisy/clean audio paths.
+
+Full training and validation manifests are not included. Generate both manifests from your own paired audio before training. [`dataset/speech/example_manifest.jsonl`](dataset/speech/example_manifest.jsonl) illustrates the record format using placeholder filenames; it is not a training dataset. Each record identifies a source utterance, its noisy/clean paths, split, and chunk boundaries in seconds. `duration_sec` is the chunk duration, and `text` can be empty for the w/o-text model. Generated manifests and their statistics are ignored by Git.
 
 Set the root directory containing `train/noisy`, `train/clean`, `val/noisy`, and `val/clean`:
 
@@ -256,7 +295,7 @@ python scripts/build_speech_manifest.py \
 
 The `--data_root` option stores relative paths such as `train/noisy/001.wav` in the manifests. During training and evaluation, these paths are resolved against `SPEECH_DATA_ROOT`. Set this variable in each new shell before running training or evaluation. When moving the dataset to another machine, update `SPEECH_DATA_ROOT` to its new location while keeping the same directory structure; the manifests do not need to be regenerated.
 
-The manifests included in this repository already use relative audio paths. If you omit `--data_root` when generating new manifests, the script stores absolute paths instead; `SPEECH_DATA_ROOT` does not override absolute paths.
+If you omit `--data_root` when generating new manifests, the script stores absolute paths instead; `SPEECH_DATA_ROOT` does not override absolute paths.
 
 ## Training
 
@@ -324,11 +363,11 @@ torchrun --nproc_per_node=1 scripts/evaluation_speech.py \
 config/nft.py
     Paper/default experiment configuration
 
-flow_grpo/speech_flowse/rewards.py
+flow_nft/speech_flowse/rewards.py
     DNSMOS, SpeechBERTScore, ERes2Net speaker similarity,
     reward-wise normalization and multi-reward scoring
 
-flow_grpo/speech_backend_adapter.py
+flow_nft/speech_backend_adapter.py
     FlowSE/NFT speech backend integration
 
 scripts/train_nft_speech.py
