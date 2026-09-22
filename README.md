@@ -418,7 +418,7 @@ If you find this repository useful, please cite the FlowSE-NFT paper. The final 
 ```bibtex
 @inproceedings{ge2027flowsenft,
   title     = {FlowSE-NFT: Efficient Multi-Reward Post-Training for Flow-Matching Speech Enhancement},
-  author    = {Ge, Ziru and Yang, Liusha and Zhang, Junan},
+  author    = {Ge, Ziru and Yang, Liusha and Zhang, Junan and Wu, Zhizheng},
   year      = {2027}
 }
 ```
