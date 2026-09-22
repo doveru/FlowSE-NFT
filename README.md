@@ -224,6 +224,22 @@ export SPEAKER_CODE_PATH="$VOICE_EVALUATION_ROOT/3D-Speaker"
 
 The default configuration loads **charactr/vocos-mel-24khz** from a local directory to convert generated mel spectrograms into audio. The repository includes `config.yaml`, but does not include `pytorch_model.bin`. Download the weights before training or evaluation; the default local-loading configuration does not automatically download missing weights.
 
+Download sources:
+
+- Official model files: [charactr/vocos-mel-24khz on Hugging Face](https://huggingface.co/charactr/vocos-mel-24khz/tree/main)
+- Weights: [pytorch_model.bin](https://huggingface.co/charactr/vocos-mel-24khz/resolve/main/pytorch_model.bin)
+- Configuration: [config.yaml](https://huggingface.co/charactr/vocos-mel-24khz/resolve/main/config.yaml)
+
+For a manual download, place the files in the following directory relative to the repository root:
+
+```text
+flow_nft/speech_flowse/vocos-mel-24khz/
+├── config.yaml
+└── pytorch_model.bin
+```
+
+Alternatively, the command below downloads both files into this directory automatically.
+
 Run the following from the repository root using the installed project environment:
 
 ```bash
