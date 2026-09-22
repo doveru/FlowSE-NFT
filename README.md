@@ -226,12 +226,19 @@ ls "$VOICE_EVALUATION_ROOT/3D-Speaker/speakerlab"
 
 The paper uses DNS2020 noisy-clean pairs. This repository consumes JSONL manifests containing paired noisy/clean audio paths.
 
-Build a training manifest:
+Set the root directory containing `train/noisy`, `train/clean`, `val/noisy`, and `val/clean`:
+
+```bash
+export SPEECH_DATA_ROOT=/path/to/DNS_data
+```
+
+Build a training manifest with audio paths relative to this root:
 
 ```bash
 python scripts/build_speech_manifest.py \
-  --noisy_dir /path/to/train/noisy \
-  --clean_dir /path/to/train/clean \
+  --noisy_dir "$SPEECH_DATA_ROOT/train/noisy" \
+  --clean_dir "$SPEECH_DATA_ROOT/train/clean" \
+  --data_root "$SPEECH_DATA_ROOT" \
   --output_manifest dataset/speech/train_manifest.jsonl \
   --split train
 ```
@@ -240,17 +247,16 @@ Build the validation manifest similarly:
 
 ```bash
 python scripts/build_speech_manifest.py \
-  --noisy_dir /path/to/val/noisy \
-  --clean_dir /path/to/val/clean \
+  --noisy_dir "$SPEECH_DATA_ROOT/val/noisy" \
+  --clean_dir "$SPEECH_DATA_ROOT/val/clean" \
+  --data_root "$SPEECH_DATA_ROOT" \
   --output_manifest dataset/speech/val_manifest.jsonl \
   --split val
 ```
 
-If the audio root differs from the manifest root, set:
+The `--data_root` option stores relative paths such as `train/noisy/001.wav` in the manifests. During training and evaluation, these paths are resolved against `SPEECH_DATA_ROOT`. Set this variable in each new shell before running training or evaluation. When moving the dataset to another machine, update `SPEECH_DATA_ROOT` to its new location while keeping the same directory structure; the manifests do not need to be regenerated.
 
-```bash
-export SPEECH_DATA_ROOT=/path/to/DNS_data
-```
+The manifests included in this repository already use relative audio paths. If you omit `--data_root` when generating new manifests, the script stores absolute paths instead; `SPEECH_DATA_ROOT` does not override absolute paths.
 
 ## Training
 
